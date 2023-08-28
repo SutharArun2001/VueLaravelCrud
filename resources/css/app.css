@@ -1,0 +1,20 @@
+body {
+    padding: 20px;
+}
+
+.vue-btn-primary {
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 2px solid #9b59b6;
+    color: #9b59b6;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    border-radius: 5px;
+}
+
+.vue-btn-primary:hover {
+    background-color: #9b59b6;
+    color: #fff;
+}
