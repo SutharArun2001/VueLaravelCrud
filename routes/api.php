@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,10 +20,13 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('login',[UserController::class,'login']);
-
+Route::post('login',[LoginController::class, 'login']);
+Route::post('logout',[LoginController::class, 'logout']);
 Route::post('user/create',[UserController::class,'create'])->name('user.create');
-Route::get('user/edit/{id}',[UserController::class,'edit']);
-Route::post('user/update/{id}',[UserController::class,'update']);
-Route::get('user/delete/{id}',[UserController::class,'delete']);
-Route::get('user/index',[UserController::class,'index']);
+
+Route::group(['middleware'=> 'guest'],function(){
+    Route::get('user/index',[UserController::class,'index']);
+    Route::get('user/edit/{id}',[UserController::class,'edit']);
+    Route::post('user/update/{id}',[UserController::class,'update']);
+    Route::get('user/delete/{id}',[UserController::class,'delete']);
+});

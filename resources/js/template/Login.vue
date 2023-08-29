@@ -49,9 +49,6 @@ const vFocuss = {
 // emitted event by child-component
 function onSubmitForm() {
   open.value = true;
-  console.log('user name :- ', userName.value);
-  console.log('password :- ', passWord.value);
-  console.log('event frsom button');
 }
 
 function setUserName(e) {

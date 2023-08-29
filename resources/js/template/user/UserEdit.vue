@@ -37,11 +37,11 @@ onMounted(() => {
 async function getUserInfo() {
     await axios.get(`/api/user/edit/${route.params.id}`)
         .then(function (res) {
-            setFieldValue('firstname', res.data.data.first_name)
-            setFieldValue('lastname', res.data.data.last_name)
-            setFieldValue('username', res.data.data.user_name)
-            setFieldValue('phonenumber', res.data.data.phone_number)
-            setFieldValue('gender', res.data.data.gender)
+            setFieldValue('firstname', res.data.user.first_name)
+            setFieldValue('lastname', res.data.user.last_name)
+            setFieldValue('username', res.data.user.user_name)
+            setFieldValue('phonenumber', res.data.user.phone_number)
+            setFieldValue('gender', res.data.user.gender)
         })
         .catch(error => {
             if (error.response.status === 422) {
@@ -59,8 +59,7 @@ const handleGenderChange = (selectedGender) => {
 const onSubmit = handleSubmit((values) => {
     const newUser = values;
     axios.post(`/api/user/update/${route.params.id}`, newUser)
-        .then(function (res) {
-            console.log('success');
+        .then(function () {
             router.push({
                 name: 'alluser',
             });

@@ -39,17 +39,14 @@ const handleGenderChange = (selectedGender) => {
 // handle on-submit validation and API
 const onSubmit = handleSubmit((values) => {
     const newUser = values;
-    console.log(newUser);
     axios.post('api/user/create', newUser)
         .then(function () {
-            console.log('success');
             router.push({
                 name: 'alluser'
             })
         })
         .catch(error => {
             if(error.response.status === 422) {
-                console.log(error.response.data.errors.email[0]);
                 backError.email = error.response.data.errors.email[0];
             }
     });

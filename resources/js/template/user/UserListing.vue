@@ -49,13 +49,9 @@ onMounted(() => {
 async function getAllUsers() {
     await axios.get('/api/user/index')
         .then(function (res) {
-            users.value = res.data.data;
-            console.log(users);
-            console.log('success');
+            users.value = res.data.users;
         })
         .catch(error => {
-            console.log('error');
-            console.log(error);
             if (error.response.status === 422) {
                 backError.email = error.response.data.errors.email[0];
             }
@@ -69,12 +65,9 @@ function openModals(id) {
 function deleteUser(id) {
     axios.get(`/api/user/delete/${id}`)
         .then(function (res) {
-            console.log(res);
             getAllUsers();
         })
         .catch(error => {
-            console.log('error');
-            console.log(error);
             if (error.response.status === 422) {
                 backError.email = error.response.data.errors.email[0];
             }

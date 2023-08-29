@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -18,8 +19,35 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Post created',
-            'data' => $users
+            'users' => $users
         ], 201);
+    }
+
+    /**
+     *  Handle login form
+     */
+    public function login(Request $request)
+    {
+        if (Auth::attempt(['email' => $request->username, 'password' => $request->password])) {
+      
+            // Authentication passed...
+            return response()->json([
+            'success' => true,
+            'message' => 'login successfully',
+            ]);
+        }
+        return response()->json([
+            'success' => false,
+            'message' => 'login failed successfully',
+        ]);
+    }
+
+    /**
+     * handle logout
+     */
+    public function logout()
+    {
+        Auth::logout();
     }
 
     /**
@@ -54,16 +82,8 @@ class UserController extends Controller
         ]);
         return response()->json([
             'status' => 'success',
-            'data' => $user,
+            'user' => $user,
         ], 200);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
@@ -83,7 +103,7 @@ class UserController extends Controller
         $user = User::find($id);
         return response()->json([
             'status' => 'success',
-            'data' => $user,
+            'user' => $user,
         ], 200);
     }
 
@@ -106,7 +126,7 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'User updated Successfully',
-                'data' => $user
+                'user' => $user
             ], 200);
         }
         return response()->json([

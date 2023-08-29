@@ -100,7 +100,6 @@ function signup() {
   const checkValidation = validation();
   if(!checkValidation) return;
   var newUser = user;
-  console.log(newUser);
   axios.post('api/user/create')
     .then(function () {
       console.log('success');

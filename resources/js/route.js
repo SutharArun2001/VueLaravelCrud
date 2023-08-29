@@ -1,7 +1,7 @@
 import { createRouter,  createWebHistory } from 'vue-router';
 import signup from './template/SignUp.vue';
 import home from './template/Home.vue';
-import login from './template/Login.vue';
+import login from './template/user/Login.vue';
 import main from './template/Main.vue';
 import register from './template/user/Registration.vue'
 import alluser from './template/user/UserListing.vue'
@@ -47,6 +47,10 @@ const routes = [
     {
         path: '/user/delete/:id',
         name: 'userdelete',
+    },
+    {
+        path: '/logout',
+        name: 'logout',
     },
 ];
 

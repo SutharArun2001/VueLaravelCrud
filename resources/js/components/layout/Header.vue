@@ -1,22 +1,29 @@
 <script setup>
+import axios from 'axios';
 import { onMounted, ref } from 'vue';
 const activePath = ref('');
 
 onMounted(() => {
   activePath.value = window.location.pathname;
-  console.log(window.location.pathname);
-  console.log(activePath.value);
 })
 
 function setActivePath(e){
   activePath.value = e.target.innerText;
+  if(activePath.value == '/logout') {
+    axios.post('/api/logout')
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  }
 }
 </script>
 
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
         <li class="nav-item">
           <router-link @click="setActivePath" to="/">Main</router-link>
@@ -24,9 +31,9 @@ function setActivePath(e){
         <li class="nav-item">
           <router-link @click="setActivePath" to="/home">Home</router-link>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <router-link @click="setActivePath" to="/signup">SignUp</router-link>
-        </li>
+        </li> -->
         <li class="nav-item">
           <router-link @click="setActivePath" v-if="activePath != 'SignUp' && activePath != '/signup'" to="/login">Login</router-link>
         </li>
@@ -34,10 +41,12 @@ function setActivePath(e){
           <router-link @click="setActivePath" to="/register">Register</router-link>
         </li>
         <li class="nav-item">
+          <router-link @click="setActivePath" to="/logout">logout</router-link>
+        </li>
+        <li class="nav-item">
           <router-link @click="setActivePath" to="/alluser">All Users</router-link>
         </li>
       </ul>
-    </div>
   </div>
 </nav>
 </template>
