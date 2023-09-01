@@ -1,59 +1,73 @@
 <script setup>
 import axios from 'axios';
 import { useForm } from 'vee-validate';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import * as yup from 'yup';
 import router from '../../route';
+import useUser from '../../composable/users';
+import { useAuthStore } from '../../composable/auth';
+import PrimaryButton from '../../Components/PrimaryButton.vue'
 
-const {handleSubmit, errors, defineInputBinds, setErrors } = useForm({
-    validationSchema: yup.object({
-        email: yup.string().email().required(),
-        password: yup.string().required(),
-    }),
+const authUser = useAuthStore();
+
+const user = ref({
+    email: '',
+    password: ''
 });
-const email = defineInputBinds('email');
-const password = defineInputBinds('password');
 
-const onSubmit = handleSubmit((values) => {
-    const userCredential = values;
-    console.log(userCredential);
-    axios.post('api/login', userCredential)
-        .then((res) => {
-            console.log(res);
-            if(res.data.success) {
-                router.push({
-                    name: 'alluser',
-                });
-            }
-        })
-        .catch((res) => {                     
-            if(res.response.data.error.email) {
-                setErrors({email: res.response.data.error.email})
-            } else {
-                setErrors({password: res.response.data.error.password})
-            }
-        })
-
-
+onMounted(async () => {
+    await authUser.setErrors();
 });
+
+// const {handleSubmit, errors, defineInputBinds, setErrors } = useForm({
+//     validationSchema: yup.object({
+//         email: yup.string().email().required(),
+//         password: yup.string().required(),
+//     }),
+// });
+// const email = defineInputBinds('email');
+// const password = defineInputBinds('password');
+
+// const onSubmit = handleSubmit((values) => {
+//     const userCredential = values;
+//     console.log(userCredential);
+//     axios.post('api/login', userCredential)
+//         .then((res) => {
+//             console.log(res);
+//             if(res.data.success) {
+//                 router.push({
+//                     name: 'alluser',
+//                 });
+//             }
+//         })
+//         .catch((res) => {                     
+//             if(res.response.data.error.email) {
+//                 setErrors({email: res.response.data.error.email})
+//             } else {
+//                 setErrors({password: res.response.data.error.password})
+//             }
+//         })
+
+
+// });
 </script>
 <template>
     <div class="container">
         <div class="title">Login</div>
-        <form @submit="onSubmit">
+        <form @submit.prevent="authUser.hangleLogin(user)">
             <div class="user_details">
                 <div class="input_pox">
                     <span class="datails">email</span>
-                    <input v-bind="email" placeholder="Enter your email " />
-                    <span class="error">{{ errors.email }}</span>
+                    <input v-model="user.email" placeholder="Enter your email " />
+                    <span v-if="authUser.errors.email" class="error">{{ authUser.errors.email[0] }}</span>
                 </div>
                 <div class="input_pox">
                     <span class="datails">Password</span>
-                    <input v-bind="password" type="password" placeholder="Enter password " />
-                    <span class="error">{{ errors.password }}</span>
+                    <input v-model="user.password" type="password" placeholder="Enter password " />
+                    <span v-if="authUser.errors.password" class="error">{{ authUser.errors.password[0] }}</span>
                 </div>
             </div>
-            <button class="vue-btn-primary" type="submit">Login</button>
+            <button type="button" class="btn btn-outline-primary">Login</button>
         </form>
     </div>
 </template>
@@ -84,9 +98,6 @@ form .user_details .input_pox {
     margin-bottom: 15px;
     margin: 12px 0;
 }
-.error {
-    color: #f00;
-}
 
 .user_details .input_pox .datails {
     display: block;
@@ -109,6 +120,6 @@ form .user_details .input_pox {
 
 .user_details .input_pox input:focus,
 .user_details .input_pox input:valid {
-    border-color: #9b59b6;
+    border-color: #0d6efd;
 }
 </style>

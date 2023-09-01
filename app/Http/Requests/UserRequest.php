@@ -14,13 +14,23 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'firstname' => 'required|string|max:250',
-            'lastname' => 'required|string|max:250',
-            'username' => 'required|string|max:250',
+            'first_name' => 'required|string|max:250',
+            'last_name' => 'required|string|max:250',
+            'user_name' => 'required|string|max:250',
             'email' => 'required|email|max:250|unique:users',
-            'phonenumber' => 'required|numeric|digits:10',
+            'phone_number' => 'required|numeric|digits:10',
             'gender' => 'required|string|max:50',
-            'password' => 'required|string|max:250',
+            'password' => 'required|string',
+            'password_confirmation' => 'required|string|same:password',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'phone_number.numberic' => 'Phone Number should be numberic',
+            'password_confirmation.required' => 'Confirmation Password is required. ',
+            'password_confirmation.same' => 'Password is not match. ',
         ];
     }
 }

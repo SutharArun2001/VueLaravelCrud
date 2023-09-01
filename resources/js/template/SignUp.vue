@@ -164,7 +164,7 @@ function signup() {
 
   .user_details .input_pox input:focus,
   .user_details .input_pox input:valid {
-    border-color: #9b59b6;
+    border-color: #0d6efd;
   }
 
   form .input_pox .gender_title {
@@ -199,7 +199,7 @@ function signup() {
   #dot-2:checked~.category label .two,
   #dot-3:checked~.category label .three {
     border-color: #d9d9d9;
-    background-color: #9b59b6;
+    background-color: #0d6efd;
   }
 
   form input[type="radio"] {
@@ -221,12 +221,12 @@ function signup() {
     font-weight: 500;
     border-radius: 5px;
     letter-spacing: 1px;
-    background: linear-gradient(123deg, #71b8e7, #9b59b6);
+    background: linear-gradient(123deg, #71b8e7, #0d6efd);
 
   }
 
   form .button input :hover {
-    background: linear-gradient(-123deg, #71b8e7, #9b59b6);
+    background: linear-gradient(-123deg, #71b8e7, #0d6efd);
   }
 
   @media (max-width: 584px) {

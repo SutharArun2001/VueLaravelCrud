@@ -14,40 +14,9 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $users = User::all();
-        return response()->json([
-            'success' => true,
-            'message' => 'Post created',
-            'users' => $users
-        ], 201);
-    }
-
-    /**
-     *  Handle login form
-     */
-    public function login(Request $request)
-    {
-        if (Auth::attempt(['email' => $request->username, 'password' => $request->password])) {
-      
-            // Authentication passed...
-            return response()->json([
-            'success' => true,
-            'message' => 'login successfully',
-            ]);
-        }
-        return response()->json([
-            'success' => false,
-            'message' => 'login failed successfully',
-        ]);
-    }
-
-    /**
-     * handle logout
-     */
-    public function logout()
-    {
-        Auth::logout();
+    {   
+        $user = Auth::user();
+        return $user;
     }
 
     /**
@@ -58,28 +27,16 @@ class UserController extends Controller
     public function create(UserRequest $request)
     {   
         $validate = $request->validated();
-        if(!$validate) {
-            return;
-        }
-        // $request->validate([
-        //     'firstName' => 'required|string|max:250',
-        //     'lastName' => 'required|string|max:250',
-        //     'userName' => 'required|string|max:250',
-        //     'email' => 'required|email|max:250|unique:users',
-        //     'phoneNumber' => 'required|numeric|digits:10',
-        //     'gender' => 'required|string|max:50',
-        //     'passWord' => 'required|string|max:250',
-        // ]);
-
         $user = User::create([
-            'first_name' => $request->firstname,
-            'last_name' => $request->lastname,
-            'user_name' => $request->username,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'user_name' => $request->user_name,
             'email' => $request->email,
-            'phone_number' => $request->phonenumber,
+            'phone_number' => $request->phone_number,
             'gender' => $request->gender,
             'password' => Hash::make($request->password),
         ]);
+        Auth::login($user);
         return response()->json([
             'status' => 'success',
             'user' => $user,
@@ -89,10 +46,14 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show()
     {
         $users = User::all();
-        return $users;
+        return response()->json([
+            'success' => true,
+            'message' => 'Post created',
+            'users' => $users
+        ], 201);
     }
 
     /**
@@ -112,14 +73,22 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'first_name' => 'required|string|max:250',
+            'last_name' => 'required|string|max:250',
+            'user_name' => 'required|string|max:250',
+            'email' => 'required|email|max:250|unique:users,email,'.$id,
+            'phone_number' => 'required|numeric|digits:10',
+            'gender' => 'required|string|max:50',
+        ]);
         $user = User::find($id);
 
         if ($user) {
             $user->update([
-                'first_name' => $request->firstname,
-                'last_name' => $request->lastname,
-                'user_name' => $request->username,
-                'phone_number' => $request->phonenumber,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'user_name' => $request->user_name,
+                'phone_number' => $request->phone_number,
                 'gender' => $request->gender,
             ]);
 

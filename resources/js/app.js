@@ -5,8 +5,10 @@
  */
 
 import './bootstrap';
-import { createApp } from 'vue';
+import { createApp, markRaw } from 'vue';
 import App from './App.vue';
+import {createPinia} from 'pinia';
+import router from './route';
 
 
 /**
@@ -17,8 +19,12 @@ import App from './App.vue';
 
 
 const app = createApp({});
-app.component
-('app', App)
+const pinia = createPinia();
+
+pinia.use(({store}) => {
+    store.router =  markRaw(router);
+})
+app.component('app', App)
 
 /**
  * The following block of code may be used to automatically register your
@@ -39,7 +45,6 @@ app.component
  */
 
 
-import router from './route';
 
-createApp(App).use(router).mount("#app");
+createApp(App).use(pinia).use(router).mount("#app");
 

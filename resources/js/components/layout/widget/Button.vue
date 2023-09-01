@@ -28,8 +28,8 @@ defineEmits(['submit-form']);
 button {
   padding: 10px 20px;
   background-color: #fff;
-  border: 2px solid #9b59b6;
-  color: #9b59b6;
+  border: 2px solid #0d6efd;
+  color: #0d6efd;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -38,7 +38,7 @@ button {
 }
 
 button:hover {
-  background-color: #9b59b6;
+  background-color: #0d6efd;
   color: #fff;
 }
 </style>

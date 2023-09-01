@@ -20,58 +20,37 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.phone_number }}</td>
                     <td>{{ user.gender }}</td>
-                    <td><router-link :to="{ name: 'useredit', params: { id: user.id } }">Edit</router-link></td>
-                    <td><button @click="openModals(user.id)">Delete</button></td>
+                    <td class="left-list-menu"><router-link :to="{ name: 'useredit', params: { id: user.id } }">Edit</router-link></td>
+                    <td class="left-list-menu"><button @click="openModals(user.id)">Delete</button></td>
                 </tr>
             </tbody>
         </table>
     </div>
     <Transition name="modals">
-        <div v-if="open" class="modalss">
+        <div v-if="modalOpen" class="modalss">
             <p>Are you sure you want Delete!</p>
-            <button @click="open = false">No</button>
-            <button @click="deleteUser(user.id)">Yes</button>
+            <button @click="modalOpen = false">No</button>
+            <button @click="deleteUser(user)">Yes</button>
         </div>
     </Transition>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-let users = ref([]);
-let open = ref(false);
-const routes = useRouter();
+import useUser from '../../composable/users';
+import { useAuthStore } from '../../composable/auth';
+const authStore =  useAuthStore();
+const {users, getUsers, deleteUser, modalOpen}  = useUser();
+let user = ref(0);
 
-onMounted(() => {
-    getAllUsers()
+onMounted(async () => {
+    await authStore.getUser();
+    getUsers();
 });
 
-async function getAllUsers() {
-    await axios.get('/api/user/index')
-        .then(function (res) {
-            users.value = res.data.users;
-        })
-        .catch(error => {
-            if (error.response.status === 422) {
-                backError.email = error.response.data.errors.email[0];
-            }
-        });
-}
-
 function openModals(id) {
-    open.value = true;
-}
-
-function deleteUser(id) {
-    axios.get(`/api/user/delete/${id}`)
-        .then(function (res) {
-            getAllUsers();
-        })
-        .catch(error => {
-            if (error.response.status === 422) {
-                backError.email = error.response.data.errors.email[0];
-            }
-        });
+    modalOpen.value = true;
+    user.value = id;
 }
 </script>
 
@@ -113,4 +92,5 @@ function deleteUser(id) {
   /* transform: translateY(5px); */
   transform: scale(1.1);
 }
+        
 </style>

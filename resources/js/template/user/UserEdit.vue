@@ -4,111 +4,115 @@ import { useForm } from 'vee-validate';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import * as yup from 'yup';
+import useUser from '../../composable/users';
+const {user, getUser,updateUser, errors}  = useUser();
 
-const { handleSubmit, errors, defineInputBinds, setFieldValue } = useForm({
-    initialValues: {
-        gender: 'male', // Initialize the gender field
-    },
-    validationSchema: yup.object({
-        firstname: yup.string().required(),
-        lastname: yup.string().required(),
-        username: yup.string().required(),
-        gender: yup.string().required(),
-        phonenumber: yup.string().matches(/^[0-9]+$/, 'Phone number must be a valid integer').min(10).max(10).required(),
-    }),
-});
 
-var firstname = defineInputBinds('firstname');
-var lastname = defineInputBinds('lastname');
-var username = defineInputBinds('username');
-var email = defineInputBinds('email');
-var phonenumber = defineInputBinds('phonenumber');
-var gender = ref('male');
-var backError = ref({});
+// const { handleSubmit, errors, defineInputBinds, setFieldValue } = useForm({
+//     initialValues: {
+//         gender: 'male', // Initialize the gender field
+//     },
+//     validationSchema: yup.object({
+//         firstname: yup.string().required(),
+//         lastname: yup.string().required(),
+//         username: yup.string().required(),
+//         gender: yup.string().required(),
+//         phonenumber: yup.string().matches(/^[0-9]+$/, 'Phone number must be a valid integer').min(10).max(10).required(),
+//     }),
+// });
 
-const router = useRouter();
+// var firstname = defineInputBinds('firstname');
+// var lastname = defineInputBinds('lastname');
+// var username = defineInputBinds('username');
+// var email = defineInputBinds('email');
+// var phonenumber = defineInputBinds('phonenumber');
+// var gender = ref('male');
+// var backError = ref({});
+
+// const router = useRouter();
 const route = useRoute();
 
 onMounted(() => {
-    getUserInfo();
+    getUser(route.params.id);
 })
 
 // get user info on mounted 
-async function getUserInfo() {
-    await axios.get(`/api/user/edit/${route.params.id}`)
-        .then(function (res) {
-            setFieldValue('firstname', res.data.user.first_name)
-            setFieldValue('lastname', res.data.user.last_name)
-            setFieldValue('username', res.data.user.user_name)
-            setFieldValue('phonenumber', res.data.user.phone_number)
-            setFieldValue('gender', res.data.user.gender)
-        })
-        .catch(error => {
-            if (error.response.status === 422) {
-                backError.email = error.response.data.errors.email[0];
-            }
-        });
-}
+// async function getUserInfo() {
+//     await axios.get(`/api/user/edit/${route.params.id}`)
+//         .then(function (res) {
+//             setFieldValue('firstname', res.data.user.first_name)
+//             setFieldValue('lastname', res.data.user.last_name)
+//             setFieldValue('username', res.data.user.user_name)
+//             setFieldValue('phonenumber', res.data.user.phone_number)
+//             setFieldValue('gender', res.data.user.gender)
+//         })
+//         .catch(error => {
+//             if (error.response.status === 422) {
+//                 backError.email = error.response.data.errors.email[0];
+//             }
+//         });
+// }
 
 // for handle gender validation
-const handleGenderChange = (selectedGender) => {
-    setFieldValue('gender', selectedGender);
-};
+// const handleGenderChange = (selectedGender) => {
+//     setFieldValue('gender', selectedGender);
+// };
 
 // handle on-submit validation and API
-const onSubmit = handleSubmit((values) => {
-    const newUser = values;
-    axios.post(`/api/user/update/${route.params.id}`, newUser)
-        .then(function () {
-            router.push({
-                name: 'alluser',
-            });
-        })
-        .catch(error => {
-            if(error.response.status === 422) {
-                backError.email = error.response.data.errors.email[0];
-            }
-    });
-});
+// const onSubmit = 
+// const onSubmit = handleSubmit((values) => {
+//     const newUser = values;
+//     axios.post(`/api/user/update/${route.params.id}`, newUser)
+//         .then(function () {
+//             router.push({
+//                 name: 'alluser',
+//             });
+//         })
+//         .catch(error => {
+//             if(error.response.status === 422) {
+//                 backError.email = error.response.data.errors.email[0];
+//             }
+//     });
+// });
 </script>
 
 <template>
     <div class="container">
         <div class="title">User Edit</div>
-        <form @submit="onSubmit">
+        <form @submit.prevent="updateUser(user.id)">
             <div class="user_details">
                 <div class="input_pox">
                     <span class="datails">First Name</span>
-                    <input v-bind="firstname" placeholder="Enter your firstname " />
-                    <span class="error">{{ errors.firstname }}</span>
+                    <input v-model="user.first_name" placeholder="Enter your firstname " />
+                    <span v-if="errors.first_name" class="error">{{ errors.first_name[0] }}</span>
 
                 </div>
                 <div class="input_pox">
                     <span class="datails">Last Name</span>
-                    <input v-bind="lastname" placeholder="Enter your lastname " />
-                    <span class="error">{{ errors.lastname }}</span>
+                    <input v-model="user.last_name" placeholder="Enter your lastname " />
+                    <span v-if="errors.last_name" class="error">{{ errors.last_name[0] }}</span>
                 </div>
                 <div class="input_pox">
                     <span class="datails">username</span>
-                    <input v-bind="username" placeholder="Enter your username " />
-                    <span class="error">{{ errors.username }}</span>
+                    <input v-model="user.user_name" placeholder="Enter your username " />
+                    <span v-if="errors.user_name" class="error">{{ errors.user_name[0] }}</span>
                 </div>
                 <div class="input_pox">
                     <span class="datails">Phone Number</span>
-                    <input v-bind="phonenumber" placeholder="Enter your phonenumber " />
-                    <span class="error">{{ errors.phonenumber }}</span>
+                    <input v-model="user.phone_number" placeholder="Enter your phonenumber " />
+                    <span v-if="errors.phone_number" class="error">{{ errors.phone_number[0] }}</span>
                 </div>
                 <div class="input_pox">
                     <span class="datails"> Gender</span>
                     <div class="category">
-                        <input type="radio" name="gender" id="dot-1" value="male" @change="handleGenderChange('male')" v-model="gender">
+                        <input type="radio" name="gender" id="dot-1" value="male"  v-model="user.gender">
                         <span>Male</span>
-                        <input type="radio" name="gender" id="dot-2" value="female" @change="handleGenderChange('female')" v-model="gender">
+                        <input type="radio" name="gender" id="dot-2" value="female" v-model="user.gender">
                         <span>Female</span>
-                        <input type="radio" name="gender" id="dot-3" value="other" @change="handleGenderChange('other')" v-model="gender">
+                        <input type="radio" name="gender" id="dot-3" value="other" v-model="user.gender">
                         <span>Other</span>
                     </div>
-                    <span class="error">{{ errors.gender }}</span>
+                    <span v-if="errors.gender" class="error">{{ errors.gender[0] }}</span>
                 </div>
                 <!-- <div class="input_pox">
                     <span class="datails">password</span>
@@ -121,7 +125,7 @@ const onSubmit = handleSubmit((values) => {
                     <span class="error">{{ errors.confirmPassWord }}</span>
                 </div> -->
             </div>
-            <button class="vue-btn-primary" type="submit">Signup</button>
+            <button class="vue-btn-primary" type="submit">Update</button>
         </form>
     </div>
 </template>
@@ -173,7 +177,7 @@ form .user_details .input_pox {
 
 .user_details .input_pox input:focus,
 .user_details .input_pox input:valid {
-    border-color: #9b59b6;
+    border-color: #0d6efd;
 }
 
 .user_details .input_pox input[type="radio"] {
@@ -212,12 +216,12 @@ form .button input {
     font-weight: 500;
     border-radius: 5px;
     letter-spacing: 1px;
-    background: linear-gradient(123deg, #71b8e7, #9b59b6);
+    background: linear-gradient(123deg, #71b8e7, #0d6efd);
 
 }
 
 form .button input :hover {
-    background: linear-gradient(-123deg, #71b8e7, #9b59b6);
+    background: linear-gradient(-123deg, #71b8e7, #0d6efd);
 }
 
 @media (max-width: 584px) {

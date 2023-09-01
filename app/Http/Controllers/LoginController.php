@@ -6,12 +6,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 class LoginController extends Controller
 {
     public function login(Request $req)
     {
+        $req->validate([
+            'email' => 'required|email|max:250',
+            'password' => 'required',
+        ]);
         $email = $req->email;
         $password = $req->password;
         $user_data = array(
@@ -20,20 +23,28 @@ class LoginController extends Controller
         );
 
         if (Auth::attempt($user_data)) {
+            $req->session()->regenerate();
             return response()->json([
                 'success' => true,
             ]);
         } else {
             $user = User::where('email',$email)->first();
             if(!$user) {
-                $errors = ['email' => 'email not found'];
+                $errors = ['email' => ['Email not found.']];
             } 
             if ($user && !Hash::check($password, $user->password)) {
-                $errors = ['password' => 'Wrong password'];
+                $errors = ['password' => ['Password not match.']];
             }
-            return response()->json([
-                'error' => $errors,
+            return response([
+                'errors' => $errors,
             ],401);
         }
     }
+
+    public function logout(Request $req)
+    {
+        Auth::logout();
+        return response()->noContent();
+    }
+
 }
