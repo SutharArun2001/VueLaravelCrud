@@ -20,6 +20,7 @@ return new class extends Migration
             $table->bigInteger('phone_number');
             $table->string('gender', 10);
             $table->string('password');
+            $table->string('profile_path')->nullable()->default('default.png');  
             $table->timestamps();
         });
     }

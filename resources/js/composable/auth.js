@@ -21,6 +21,7 @@ export const useAuthStore = defineStore("auth", {
             const data = await axios.get("/user/auth");
             this.authUser = data.data;
             if(!this.authUser) {
+                console.log(this.authUser);
                 this.router.push({name:"login"})
             }
         },

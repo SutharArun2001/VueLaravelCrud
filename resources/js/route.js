@@ -3,54 +3,68 @@ import signup from './template/SignUp.vue';
 import home from './template/Home.vue';
 import login from './template/user/Login.vue';
 import main from './template/Main.vue';
+import authed from '../js/Authed.vue';
+import defaults from '../js/Default.vue';
 import register from './template/user/Registration.vue'
 import alluser from './template/user/UserListing.vue'
 import UserEdit from './template/user/UserEdit.vue'
 
-
 const routes = [
     {
         path: '/',
-        name: 'main',
-        component: main,
+        component: authed,
+        children: [
+            {
+                path: '/',
+                name: 'main',
+                component: main,
+            },
+            {
+                path: '/home',
+                name: 'home',
+                component: home,
+            },
+            {
+                path: '/alluser',
+                name: 'alluser',
+                component: alluser,
+            },
+            {
+                path: '/user/edit/:id',
+                name: 'useredit',
+                component: UserEdit,
+            },
+            {
+                path: '/user/delete/:id',
+                name: 'userdelete',
+            },
+            {
+                path: '/logout',
+                name: 'logout',
+            },
+        ],
     },
     {
-        path: '/home',
-        name: 'home',
-        component: home,
-    },
-    {
-        path: '/signup',
-        name: 'signup',
-        component: signup,
-    },
-    {
-        path: '/register',
-        name: 'register',
-        component: register,
-    },
-    {
-        path: '/login',
-        name: 'login',
-        component: login,
-    },
-    {
-        path: '/alluser',
-        name: 'alluser',
-        component: alluser,
-    },
-    {
-        path: '/user/edit/:id',
-        name: 'useredit',
-        component: UserEdit,
-    },
-    {
-        path: '/user/delete/:id',
-        name: 'userdelete',
-    },
-    {
-        path: '/logout',
-        name: 'logout',
+        path: '/',
+        component: defaults,
+        children: [
+            {
+            path: '/signup',
+            name: 'signup',
+            component: signup,
+            },
+            {
+                path: '/register',
+                name: 'register',
+                component: register,
+            },
+            {
+                path: '/login',
+                name: 'login',
+                component: login,
+            },
+            
+        ],
     },
 ];
 

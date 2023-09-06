@@ -1,86 +1,38 @@
 <script setup>
-import axios from 'axios';
-import { useForm } from 'vee-validate';
 import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import * as yup from 'yup';
+import { useRoute } from 'vue-router';
 import useUser from '../../composable/users';
+import PickUploader from '../../components/layout/widget/PickUploader.vue';
+
 const {user, getUser,updateUser, errors}  = useUser();
-
-
-// const { handleSubmit, errors, defineInputBinds, setFieldValue } = useForm({
-//     initialValues: {
-//         gender: 'male', // Initialize the gender field
-//     },
-//     validationSchema: yup.object({
-//         firstname: yup.string().required(),
-//         lastname: yup.string().required(),
-//         username: yup.string().required(),
-//         gender: yup.string().required(),
-//         phonenumber: yup.string().matches(/^[0-9]+$/, 'Phone number must be a valid integer').min(10).max(10).required(),
-//     }),
-// });
-
-// var firstname = defineInputBinds('firstname');
-// var lastname = defineInputBinds('lastname');
-// var username = defineInputBinds('username');
-// var email = defineInputBinds('email');
-// var phonenumber = defineInputBinds('phonenumber');
-// var gender = ref('male');
-// var backError = ref({});
-
-// const router = useRouter();
 const route = useRoute();
+const userPhoto = ref('');
 
-onMounted(() => {
-    getUser(route.params.id);
+onMounted(async () => {
+    await getUser(route.params.id);
+    userPhoto.value = '/storage/profiles/'+user.value.profile_path;
 })
 
-// get user info on mounted 
-// async function getUserInfo() {
-//     await axios.get(`/api/user/edit/${route.params.id}`)
-//         .then(function (res) {
-//             setFieldValue('firstname', res.data.user.first_name)
-//             setFieldValue('lastname', res.data.user.last_name)
-//             setFieldValue('username', res.data.user.user_name)
-//             setFieldValue('phonenumber', res.data.user.phone_number)
-//             setFieldValue('gender', res.data.user.gender)
-//         })
-//         .catch(error => {
-//             if (error.response.status === 422) {
-//                 backError.email = error.response.data.errors.email[0];
-//             }
-//         });
-// }
+function setImageValue(e) {
+    user.value.profile_path = e.value;
+}
 
-// for handle gender validation
-// const handleGenderChange = (selectedGender) => {
-//     setFieldValue('gender', selectedGender);
-// };
-
-// handle on-submit validation and API
-// const onSubmit = 
-// const onSubmit = handleSubmit((values) => {
-//     const newUser = values;
-//     axios.post(`/api/user/update/${route.params.id}`, newUser)
-//         .then(function () {
-//             router.push({
-//                 name: 'alluser',
-//             });
-//         })
-//         .catch(error => {
-//             if(error.response.status === 422) {
-//                 backError.email = error.response.data.errors.email[0];
-//             }
-//     });
-// });
-</script>
+</script>   
 
 <template>
+    <h2 class="py-2">Edit User</h2>
     <div class="container">
+        <div class="sub-container">
         <div class="title">User Edit</div>
         <form @submit.prevent="updateUser(user.id)">
             <div class="user_details">
+                <div v-if="user" class="image_pox " >
+                    <PickUploader :user-profile="userPhoto" @file-value=" (e) => setImageValue(e)" />
+                    <span class="datails d-block">Profile Picture</span>
+                </div>
+                <input :v-bind:value="user.profile_path" type="file" name="profile_path"  hidden />
+                <div class="input_pox">
+                </div>
                 <div class="input_pox">
                     <span class="datails">First Name</span>
                     <input v-model="user.first_name" placeholder="Enter your firstname " />
@@ -128,33 +80,48 @@ onMounted(() => {
             <button class="vue-btn-primary" type="submit">Update</button>
         </form>
     </div>
+    </div>
 </template>
 <style scoped>
 .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100% - 70px);
+}
+.sub-container {
     max-width: 700px;
     width: 100%;
-    background: #e3e3e3;
+    box-shadow: 2px 2px 10px #cccccc;
+    border-radius: 16px;
     padding: 25px 30px;
-    border-radius: 5px;
 }
 
-.container .title {
+.sub-container .title {
     font-size: 25px;
     font-weight: 500;
     position: relative;
 }
 
-.container form .user_details {
+.sub-container form .user_details {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
 }
 
+form .user_details .image_pox,
 form .user_details .input_pox {
     margin-bottom: 15px;
     margin: 12px 0;
     width: calc(100% / 2 - 20px);
 }
+
+.image_pox img {
+    border-radius: 100%;
+    width: 120px;
+    height: 120px;
+}
+
 
 .user_details .input_pox .datails {
     display: block;

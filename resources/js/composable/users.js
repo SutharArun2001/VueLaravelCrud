@@ -2,12 +2,17 @@ import axios from "axios"
 import { ref } from "vue"
 import { useRouter } from "vue-router";
 axios.defaults.baseURL = "/api/"
+const config = {
+    headers: {
+        'content-type': 'multipart/form-data'
+    }
+}
 export default function useUser() {
     const users = ref([]);
     const user = ref([]);
-    const errors = ref([]);
     const router = useRouter();
     const modalOpen = ref(false);
+    var errors = ref([]);
     
     const getUsers = async () => {
         const res = await axios.get("user/show");
@@ -32,6 +37,7 @@ export default function useUser() {
     const getUser = async (id) => {
         const res = await axios.get("user/edit/"+id);
         user.value = res.data.user;
+        console.log(user.value.profile_path);
     }
 
     const createUser = async (data) => {
@@ -46,8 +52,9 @@ export default function useUser() {
     }
 
     const updateUser = async (id) => {
+        console.log(user);
         try {
-            await axios.post("user/update/"+id,user.value);
+            await axios.post("user/update/"+id,user.value, config);
             await router.push({name: 'alluser'})
         } catch (error) {
             if(error.response.status === 422) {

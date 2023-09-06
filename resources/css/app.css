@@ -1,7 +1,14 @@
-body {
-    padding: 20px;
+html,body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 100%;
 }
 
+body #app {
+    width: 100%;
+    height: 100%;
+}
 .vue-btn-primary {
     padding: 10px 20px;
     background-color: #fff;
@@ -21,4 +28,18 @@ body {
 
 .error {
     color: rgb(255, 68, 68);
+}
+
+.router-link-exact-active {
+    background-color: rgba(105, 108, 255, 0.387);
+    box-shadow: none;
+    color: rgb(25, 26, 68);
+}
+table {
+    box-shadow: 2px 2px 10px #cccccc;
+    border-radius: 16px;
+    overflow: hidden;
+}
+table td{
+    padding: 10px 10px;
 }

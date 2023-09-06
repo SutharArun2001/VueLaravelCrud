@@ -20,12 +20,10 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-
 Route::post('login',[LoginController::class, 'login']);
 Route::get('logout',[LoginController::class, 'logout']);
 Route::post('user/create',[UserController::class,'create'])->name('user.create');
 Route::get('user/auth',[AuthController::class,'getAuthUser']);
-
 Route::middleware(['auth'])->group(function(){
     Route::get('user/show',[UserController::class,'show']);
     Route::get('user/edit/{id}',[UserController::class,'edit']);

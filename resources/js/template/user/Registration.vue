@@ -1,21 +1,32 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import useUser from '../../composable/users';
 import { useAuthStore } from '../../composable/auth';
 const authStore = useAuthStore();
+import imageValidate from '../../composable/imageValidation'
+const {validate, imageErrors, previewImage} = imageValidate();
 const user = ref({
-    first_name:'',
-    last_name:'',
-    user_name:'',
-    phone_number:'',
-    email:'',
-    gender:'',
-    password:'',
+    profile: '',
+    first_name: '',
+    last_name: '',
+    user_name: '',
+    phone_number: '',
+    email: '',
+    gender: '',
+    password: '',
 });
 
 onMounted(async () => {
     await authStore.setErrors();
+    console.log(previewImage);
+
 });
+
+async function onImageChange(e) {
+    console.log(e);
+    await validate(e);
+    console.log(imageErrors.value.profile);
+    console.log(previewImage);
+}
 
 // const { handleSubmit, errors, defineInputBinds, setFieldValue } = useForm({
 //     initialValues: {
@@ -67,87 +78,113 @@ onMounted(async () => {
 
 <template>
     <div class="container">
-        <div class="title">Registeration</div>
-        <form @submit.prevent="authStore.hangleRegistration(user)">
-            <div class="user_details">
-                <div class="input_pox">
-                    <span class="datails">First Name</span>
-                    <input v-model="user.first_name" placeholder="Enter your firstname " />
-                    <span v-if="authStore.errors.first_name" class="error">{{ authStore.errors.first_name[0] }}</span>
-
-                </div>
-                <div class="input_pox">
-                    <span class="datails">Last Name</span>
-                    <input v-model="user.last_name" placeholder="Enter your lastname " />
-                    <span v-if="authStore.errors.last_name" class="error">{{ authStore.errors.last_name[0] }}</span>
-                </div>
-                <div class="input_pox">
-                    <span class="datails">username</span>
-                    <input v-model="user.user_name" placeholder="Enter your username " />
-                    <span v-if="authStore.errors.user_name" class="error">{{ authStore.errors.user_name[0] }}</span>
-                </div>
-                <div class="input_pox">
-                    <span class="datails">Phone Number</span>
-                    <input v-model="user.phone_number" placeholder="Enter your phonenumber " />
-                    <span v-if="authStore.errors.phone_number" class="error">{{ authStore.errors.phone_number[0] }}</span>
-                </div>
-                <div class="input_pox">
-                    <span class="datails">Email</span>
-                    <input v-model="user.email" placeholder="Enter your email " />
-                    <span v-if="authStore.errors.email" class="error">{{ authStore.errors.email[0] }}</span>
-                </div>
-                <div class="input_pox">
-                    <span class="datails"> Gender</span>
-                    <div class="category">
-                        <input type="radio" name="gender" id="dot-1" value="male"  v-model="user.gender">
-                        <span>Male</span>
-                        <input type="radio" name="gender" id="dot-2" value="female" v-model="user.gender">
-                        <span>Female</span>
-                        <input type="radio" name="gender" id="dot-3" value="other" v-model="user.gender">
-                        <span>Other</span>
+        <div class="registration-container">
+            <div class="title">Registeration</div>
+            <form @submit.prevent="authStore.hangleRegistration(user)">
+                <div class="user_details">
+                    <div class="image_pox">
+                        <span class="datails d-block">Profile Picture</span>
+                        <img v-if="previewImage" src="" alt="" srcset="">
+                        <input type="file" @change="onImageChange"/>
+                        <span v-if="imageErrors.profile" class="error">{{ imageErrors.profile }}</span>
+                        {{ previewImage }}
                     </div>
-                    <span v-if="authStore.errors.gender" class="error">{{ authStore.errors.gender[0] }}</span>
+                    <div class="input_pox">
+                    </div>
+                    <div class="input_pox">
+                        <span class="datails">First Name</span>
+                        <input v-model="user.first_name" placeholder="Enter your firstname " />
+                        <span v-if="authStore.errors.first_name" class="error">{{ authStore.errors.first_name[0] }}</span>
+
+                    </div>
+                    <div class="input_pox">
+                        <span class="datails">Last Name</span>
+                        <input v-model="user.last_name" placeholder="Enter your lastname " />
+                        <span v-if="authStore.errors.last_name" class="error">{{ authStore.errors.last_name[0] }}</span>
+                    </div>
+                    <div class="input_pox">
+                        <span class="datails">username</span>
+                        <input v-model="user.user_name" placeholder="Enter your username " />
+                        <span v-if="authStore.errors.user_name" class="error">{{ authStore.errors.user_name[0] }}</span>
+                    </div>
+                    <div class="input_pox">
+                        <span class="datails">Phone Number</span>
+                        <input v-model="user.phone_number" placeholder="Enter your phonenumber " />
+                        <span v-if="authStore.errors.phone_number" class="error">{{ authStore.errors.phone_number[0]
+                        }}</span>
+                    </div>
+                    <div class="input_pox">
+                        <span class="datails">Email</span>
+                        <input v-model="user.email" placeholder="Enter your email " />
+                        <span v-if="authStore.errors.email" class="error">{{ authStore.errors.email[0] }}</span>
+                    </div>
+                    <div class="input_pox">
+                        <span class="datails"> Gender</span>
+                        <div class="category">
+                            <input type="radio" name="gender" id="dot-1" value="male" v-model="user.gender">
+                            <span>Male</span>
+                            <input type="radio" name="gender" id="dot-2" value="female" v-model="user.gender">
+                            <span>Female</span>
+                            <input type="radio" name="gender" id="dot-3" value="other" v-model="user.gender">
+                            <span>Other</span>
+                        </div>
+                        <span v-if="authStore.errors.gender" class="error">{{ authStore.errors.gender[0] }}</span>
+                    </div>
+                    <div class="input_pox">
+                        <span class="datails">password</span>
+                        <input v-model="user.password" type="password" placeholder="Enter password " />
+                        <span v-if="authStore.errors.password" class="error">{{ authStore.errors.password[0] }}</span>
+                    </div>
+                    <div class="input_pox">
+                        <span class="datails">Confirm password</span>
+                        <input v-model="user.password_confirmation" type="password" placeholder="Re-enter password " />
+                        <span v-if="authStore.errors.password_confirmation" class="error">{{
+                            authStore.errors.password_confirmation[0] }}</span>
+                    </div>
                 </div>
-                <div class="input_pox">
-                    <span class="datails">password</span>
-                    <input v-model="user.password" type="password" placeholder="Enter password " />
-                    <span v-if="authStore.errors.password" class="error">{{ authStore.errors.password[0] }}</span>
-                </div>
-                <div class="input_pox">
-                    <span class="datails">Confirm password</span>
-                    <input v-model="user.password_confirmation" type="password" placeholder="Re-enter password " />
-                    <span v-if="authStore.errors.password_confirmation" class="error">{{ authStore.errors.password_confirmation[0] }}</span>
-                </div>
-            </div>
-            <button class="vue-btn-primary" type="submit">Signup</button>
-        </form>
+                <button class="vue-btn-primary mt-2" type="submit">Register</button>
+            </form>
+        </div>
     </div>
 </template>
 <style scoped>
 .container {
-    max-width: 700px;
-    width: 100%;
-    background: #e3e3e3;
-    padding: 25px 30px;
-    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100% - 70px);
 }
 
-.container .title {
+.registration-container {
+    width: 100%;
+    max-width: 700px;
+    padding: 25px 30px;
+    box-shadow: 2px 2px 10px #cccccc;
+    border-radius: 16px;
+}
+
+.registration-container .title {
     font-size: 25px;
     font-weight: 500;
     position: relative;
 }
 
-.container form .user_details {
+.registration-container form .user_details {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
 }
 
+form .user_details .image_pox,
 form .user_details .input_pox {
     margin-bottom: 15px;
     margin: 5px 0;
     width: calc(100% / 2 - 20px);
+}
+
+.image_pox img {
+    width: 100px;
+    height: 100px;
 }
 
 .user_details .input_pox .datails {
@@ -219,7 +256,7 @@ form .button input :hover {
 }
 
 @media (max-width: 584px) {
-    .container {
+    .registration-container {
         max-width: 100%;
     }
 
@@ -232,7 +269,7 @@ form .button input :hover {
         width: 100%;
     }
 
-    .container form .user_details {
+    .registration-container form .user_details {
         max-height: 300px;
         overflow: scroll;
     }
@@ -240,5 +277,4 @@ form .button input :hover {
     .user_details::-webkit-scrollber {
         width: 0;
     }
-}
-</style>
+}</style>

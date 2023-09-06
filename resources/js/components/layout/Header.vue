@@ -1,74 +1,60 @@
 <script setup>
-import axios from 'axios';
 import { onMounted, ref } from 'vue';
-import useUser from '../../composable/users';
 import { useAuthStore } from '../../composable/auth';
 const activePath = ref('');
 const authStore = useAuthStore();
-onMounted(() => {
+let userProfile = '';
+
+onMounted(async () => {
     activePath.value = window.location.pathname;
+    console.log(await authStore.getUser());
+    userProfile = '/storage/profiles/'+authStore.authUser.profile_path;
 });
+
 
 </script>
 
 <template>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light text-align-right">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li v-if="authStore.user" class="nav-item">
-                        <router-link to="/">Main</router-link>
-                    </li>
-                    <li v-if="authStore.user" class="nav-item">
-                        <router-link to="/home">Home</router-link>
-                    </li>
-                    <!-- <li class="nav-item">
-                <router-link to="/signup">SignUp</router-link>
-                </li> -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li v-if="!authStore.user" class="nav-item">
-                        <router-link to="/login">Login</router-link>
+                        <router-link class="rounded" to="/login">Login</router-link>
                     </li>
                     <li v-if="!authStore.user" class="nav-item">
-                        <router-link to="/register">Register</router-link>
+                        <router-link class="rounded" to="/register">Register</router-link>
                     </li>
-                    <li v-if="authStore.user" @click="authStore.hangleLogout" class="nav-item">
-                        <router-link to="/logout">logout</router-link>
+                    <li v-if="authStore.user"  class="nav-item">
+                        
                     </li>
-                    <li v-if="authStore.user" class="nav-item">
-                        <router-link to="/alluser">All Users</router-link>
-                    </li>
-                    <li>
+                    <li v-if="authStore.user">
                         <div class="dropdown">
                             <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
                                 id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="https://github.com/mdo.png" alt="" width="32" height="32"
+                                <img :src="userProfile" alt="" width="32" height="32"
                                     class="rounded-circle me-2">
-                                <strong>mdo</strong>
+                                <strong>{{ authStore.authUser.first_name }}</strong>
                             </a>
-                            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+                            <ul class="dropdown-menu text-small shadow start-10" aria-labelledby="dropdownUser2">
                                 <li><a class="dropdown-item" href="#">Profile</a></li>
                                 <li><a class="dropdown-item" href="#">Settings</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="#">Sign out</a></li>
+                                <li><router-link @click="authStore.hangleLogout" class="rounded" to="/logout">logout</router-link></li>
                             </ul>
                         </div>
                     </li>
                 </ul>
-                <hr>
             </div>
         </div>
     </nav>
 </template>
 
 <style scoped>
-header {
-    padding: 30px 20px;
+nav {
+    background: #415fdf;
 }
 
 ul {
@@ -79,7 +65,15 @@ ul {
 }
 
 ul a {
-    color: #000;
+    padding: 10px;
     text-decoration: none;
+}
+
+.dropdown-menu {
+    display: none;
+}
+
+.dropdown-menu.show {
+    display: block;
 }
 </style>

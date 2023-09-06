@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -82,7 +83,15 @@ class UserController extends Controller
             'gender' => 'required|string|max:50',
         ]);
         $user = User::find($id);
+        $fileName = '';
 
+        if($request->hasFile('profile_path')) {
+            $file = $request->file('profile_path');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            // Store the file in the 'public/profiles' directory.
+            $file->storeAs('public/profiles', $fileName); 
+        }
+        
         if ($user) {
             $user->update([
                 'first_name' => $request->first_name,
@@ -90,8 +99,8 @@ class UserController extends Controller
                 'user_name' => $request->user_name,
                 'phone_number' => $request->phone_number,
                 'gender' => $request->gender,
+                'profile_path' => $fileName ? $fileName : '',
             ]);
-
             return response()->json([
                 'success' => true,
                 'message' => 'User updated Successfully',
@@ -110,7 +119,25 @@ class UserController extends Controller
     public function delete($id)
     {
         if ($id) {
+            $user = User::find($id);
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+            
+            $photoPath = '/public/profiles/' . $user->profile_path;
+            if($user->profile_path != 'default.png') {
+                // Use Storage facade to delete the file
+                if (Storage::exists($photoPath)) {
+                    Storage::delete($photoPath);
+                }
+            }
+
             User::find($id)->delete();
+
             return response()->json([
                 'success' => true,
                 'message' => 'User deleted'

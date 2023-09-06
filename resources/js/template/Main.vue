@@ -9,8 +9,6 @@ const itemss = [
         {name: 'kuldeep'}
 ];
 const items = ref(itemss);
-
-
 // function incre() {
 //     count.value++
 // }
@@ -32,6 +30,7 @@ export default {
         }
     },
     methods: {
+       
         incre() {
             console.log('in methodvv');
             count.value++
@@ -60,6 +59,7 @@ export default {
 }
 </script>
 <template>
+    <h2 class="py-2">Main</h2>
     <!-- {{ 'Aa' ? 'true' : 'false' }} -->
     <button v-on:click="incre">Count is :- {{ count }}</button>
     <button @click.ctrl="incre">Count is :- {{ count }}</button>
